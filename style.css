@@ -358,8 +358,13 @@
     width: 150px;
     height: 50px;
     border-radius: 10px;
-    border: 1px hidden #4cae4c;
+    border: 1px hidden whitesmoke;
     background-color: #dc3545;
-    color:white;
-    font-weight: 700;
   }
+.inforAccount{
+    width: 50%;
+    font-weight: 700;
+}
+.inforAccount label{
+    font-weight: 100;
+}

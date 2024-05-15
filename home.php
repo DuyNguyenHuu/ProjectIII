@@ -32,18 +32,23 @@ require_once "database.php";
             <button class="tabLink" id="buttonMaintenanceList" onclick="openTab(event, 'maintenanceList', true)">
                 DANH SÁCH BẢO DƯỠNG XE
             </button>
-            <div>
-                <?php
-                $sql_name="SELECT * FROM ACCOUNT WHERE ACCOUNT='".$_SESSION["email"]."'";
-                $result_name=$mysqli->query($sql_name);
-                if (mysqli_num_rows($result_name) > 0) {
-                    while ($row = mysqli_fetch_assoc($result_name)) {
-                        echo"<div class='name'><label style='color:white'>Tên quản lý</label><br>".$row["NAME"]."</div>";
-                    }
-                }
-                ?>
-                <a href="signout.php"><button class="signout">ĐĂNG XUẤT</button></a>
-            </div>
+            <button class="tabLink" id="buttonInfor" onclick="openTab(event, 'infor', true)">
+                <div>
+                    <?php
+                        $sql_name="SELECT * FROM ACCOUNT WHERE ACCOUNT='".$_SESSION["email"]."'";
+                        $result_name=$mysqli->query($sql_name);
+                        if (mysqli_num_rows($result_name) > 0) {
+                            while ($row = mysqli_fetch_assoc($result_name)) {
+                                echo"<div><label style='color:white'>Tên quản lý</label><br>".$row["NAME"]."</div>";
+                            }
+                        }
+                    ?>
+                </div>
+            </button>
+            <button class="signout"><a href="signout.php"
+                    style="color: white; font-weight: 700; text-decoration: none;">
+                    ĐĂNG XUẤT</a>
+            </button>
         </div>
         <!-- Nội dung các mục trong trang -->
         <div class="allContent">
@@ -915,8 +920,40 @@ require_once "database.php";
                     ?>
                 </div>
             </div>
-            <div class="tabContent" id="statistical">
-
+            <div class="tabContent" id="infor">
+                <div style="width:300%">
+                    <?php
+                        $sql_infor="SELECT * FROM ACCOUNT WHERE ACCOUNT='".$_SESSION["email"]."'";
+                        $result_infor=$mysqli->query($sql_infor);
+                        if (mysqli_num_rows($result_infor) > 0) {
+                            while ($row = mysqli_fetch_assoc($result_infor)) {
+                                echo"<div class='inforAccount'>
+                                        <label>Mã: </label>".$row["ID"]."<br>
+                                        <label>Họ tên: </label>".$row["NAME"]."<br>
+                                        <label>Địa chỉ: </label>".$row["ADDRESS"]."<br>
+                                        <label>Số điện thoại: </label>".$row["CONTACT"]."<br>
+                                        <label>Email: </label>".$row["ACCOUNT"]."<br>";
+                                if ($row["ROLE"]==0){
+                                    echo"<label>Vị trí: </label>Quản lý<br>";
+                                }
+                                else{
+                                    echo"<label>Vị trí: </label>Sếp<br>";
+                                }
+                                echo"</div>";
+                            }
+                        }
+                    ?>
+                </div>
+                <div>
+                    <form method="POST" action="changeInfor.php">
+                        <button type="submit">Thay đổi thông tin cá nhân</button>
+                    </form>
+                </div>
+                <div>
+                    <form method="POST" action="changePassword.php">
+                        <button type="submit">Thay đổi mật khẩu</button>
+                    </form>
+                </div>
             </div>
         </div>
 
