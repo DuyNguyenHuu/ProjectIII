@@ -29,9 +29,10 @@ require_once "database.php";
             </button>
             <button class="tabLink" id="buttonStaff" onclick="openTab(event, 'staff', true)">NHÂN VIÊN</button>
             <button class="tabLink" id="buttonProduct" onclick="openTab(event, 'product', true)">SẢN PHẨM</button>
-            <button class="tabLink" id="buttonMaintenanceList" onclick="openTab(event, 'maintenanceList', true)">
-                DANH SÁCH BẢO DƯỠNG XE
-            </button>
+            <button class="tabLink" id="buttonMaintenanceList" onclick="openTab(event, 'maintenanceList', true)">DANH
+                SÁCH BẢO DƯỠNG XE</button>
+            <button class="tabLink" id="buttonStatistical" onclick="openTab(event, 'statistical', true)">THỐNG
+                KÊ</button>
             <button class="tabLink" id="buttonInfor" onclick="openTab(event, 'infor', true)">
                 <div>
                     <?php
@@ -953,6 +954,84 @@ require_once "database.php";
                     <form method="POST" action="changePassword.php">
                         <button type="submit">Thay đổi mật khẩu</button>
                     </form>
+                </div>
+            </div>
+            <div class="tabContent" id="statistical">
+                <div style="display:flex;justify-content: space-around;">
+                    <?php
+                        $sql_countProduct="SELECT COUNT(*) AS countProduct FROM `product` WHERE 1";
+                        $result_countProduct=$mysqli->query($sql_countProduct);
+                        $sql_sumProduct="SELECT SUM(SOLUONG) AS sumProduct FROM `product` WHERE 1";
+                        $result_sumProduct=$mysqli->query($sql_sumProduct);
+
+                        if (mysqli_num_rows($result_countProduct) > 0) {
+                            $row=$result_countProduct->fetch_assoc();
+                            echo "<div class='statistical'>
+                                    <label>Số sản phẩm: ".$row['countProduct']."</label>
+                                </div>";
+                        }
+                        if (mysqli_num_rows($result_sumProduct) > 0) {
+                            $row=$result_sumProduct->fetch_assoc();
+                            echo "<div class='statistical'>
+                                    <label>Tổng số sản phẩm: ".$row['sumProduct']."</label>
+                                </div>";
+                        }
+                    ?>
+                </div>
+                <div style="display:flex;justify-content: space-around;">
+                    <?php
+                        if ($_SESSION["role"]==0){
+                            $sql_countStaff="SELECT COUNT(*) AS countStaff FROM staff WHERE NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countCustomer="SELECT COUNT(DISTINCT TENKH) AS countCustomer FROM customer WHERE NGUOIQL='".$_SESSION["email"]."'";
+                        }
+                        else{
+                            $sql_countStaff="SELECT COUNT(*) AS countStaff FROM staff WHERE 1";
+                            $sql_countCustomer="SELECT COUNT(DISTINCT TENKH) AS countCustomer FROM customer WHERE 1";
+                        }
+                        $result_countStaff=$mysqli->query($sql_countStaff);
+                        $result_countCustomer=$mysqli->query($sql_countCustomer);
+
+                        if (mysqli_num_rows($result_countStaff) > 0) {
+                            $row=$result_countStaff->fetch_assoc();
+                            echo "<div class='statistical'>
+                                    <label>Số nhân viên: ".$row['countStaff']."</label>
+                                </div>";
+                        }
+                        if (mysqli_num_rows($result_countCustomer) > 0) {
+                            $row=$result_countCustomer->fetch_assoc();
+                            echo "<div class='statistical'>
+                                    <label>Số khách hàng: ".$row['countCustomer']."</label>
+                                </div>";
+                        }
+                    ?>
+                </div>
+                <div style="display:flex;justify-content: space-around;">
+                    <?php
+                        $today=date('Y-m-d');
+                        if ($_SESSION["role"]==0){
+                            $sql_countProductSale="SELECT COUNT(*) AS countProductSale FROM customer WHERE NGAY='".$today."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProductSale="SELECT SUM(GIASP) AS sumProductSale FROM customer  natural join product WHERE NGAY='".$today."' AND NGUOIQL='".$_SESSION["email"]."'";
+                        }
+                        else{
+                            $sql_countProductSale="SELECT COUNT(*) AS countProductSale FROM customer WHERE NGAY='".$today."'";
+                            $sql_sumProductSale="SELECT SUM(GIASP) AS sumProductSale FROM customer  natural join product WHERE NGAY='".$today."'";
+                        }
+                        $result_countProductSale=$mysqli->query($sql_countProductSale);
+                        $result_sumProductSale=$mysqli->query($sql_sumProductSale);
+
+                        if (mysqli_num_rows($result_countProductSale) > 0) {
+                            $row=$result_countProductSale->fetch_assoc();
+                            echo "<div class='statistical'>
+                                    <label>Số sản phẩm bán hôm nay: ".$row['countProductSale']."</label>
+                                </div>";
+                        }
+                        if (mysqli_num_rows($result_sumProductSale) > 0) {
+                            $row=$result_sumProductSale->fetch_assoc();
+                            echo "<div class='statistical'>
+                                    <label>Tổng tiền bán hôm nay: ".$row['sumProductSale']."</label>
+                                </div>";
+                        }
+                    ?>
                 </div>
             </div>
         </div>
