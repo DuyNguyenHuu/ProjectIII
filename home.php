@@ -195,7 +195,7 @@ require_once "database.php";
                                             $mysqli->query($sql_saveOrder);
                                         }
                                     }
-                                    die ("<script>alert('Bạn đã thêm đơn hàng thành công!');</script>");
+                                    die ("<script>alert('Bạn đã thêm đơn hàng thành công!');window.location.href = 'home.php'</script>");
                                 }
                             }
                         }
@@ -1044,11 +1044,13 @@ require_once "database.php";
                         }
                     ?>
                 </div>
-                <div>
-                    <h1>Biểu đồ bán hàng trong 7 ngày vừa qua</h1>
-                    <canvas id="myChart" width="800" height="300"></canvas>
-                    <script>
-                    <?php
+
+                <div style="display:flex">
+                    <div>
+                        <h1>Biểu đồ bán hàng trong 7 ngày vừa qua</h1>
+                        <canvas id="myChart" width="800" height="400"></canvas>
+                        <script>
+                        <?php
                         $today=date('Y-m-d');
                         if ($_SESSION["role"]==0){
                             $sql_countProduct0="SELECT COUNT(*) AS countProduct0 FROM customer WHERE NGAY='".date('Y-m-d')."' AND NGUOIQL='".$_SESSION["email"]."'";
@@ -1193,37 +1195,220 @@ require_once "database.php";
                         echo "var data2 = " . json_encode($data2) . ";";
                         echo "var data3 = " . json_encode($data3) . ";";
                     ?>
-                    var ctx = document.getElementById('myChart').getContext('2d');
-                    var myChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: data3,
-                            datasets: [{
-                                    label: 'Số sản phẩm bán được(chiếc)',
-                                    data: data1,
-                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                    borderColor: 'rgba(255, 99, 132, 1)',
-                                    borderWidth: 1
-                                },
-                                {
-                                    label: 'Tổng số tiền bán được( trăm triệu đồng)',
-                                    data: data2,
-                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                    borderColor: 'rgba(54, 162, 235, 1)',
-                                    borderWidth: 1
-                                }
-                            ]
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true
+                        var ctx = document.getElementById('myChart').getContext('2d');
+                        var myChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: data3,
+                                datasets: [{
+                                        label: 'Số sản phẩm bán được(chiếc)',
+                                        data: data1,
+                                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                        borderColor: 'rgba(255, 99, 132, 1)',
+                                        borderWidth: 1
+                                    },
+                                    {
+                                        label: 'Tổng số tiền bán được( trăm triệu đồng)',
+                                        data: data2,
+                                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        borderWidth: 1
+                                    }
+                                ]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
                                 }
                             }
+                        });
+                        </script>
+                    </div>
+
+                    <div>
+                        <h1>Biểu đồ bán hàng trong 7 tháng vừa qua</h1>
+                        <canvas id="myChartMonth" width="800" height="400"></canvas>
+                        <script>
+                        <?php
+                        $today=date('Y-m');
+                        if ($_SESSION["role"]==0){
+                            $sql_countProductMonth0="SELECT COUNT(*) AS countProductMonth0 FROM customer WHERE NGAY LIKE'%".date('Y-m')."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countProductMonth1="SELECT COUNT(*) AS countProductMonth1 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-1 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countProductMonth2="SELECT COUNT(*) AS countProductMonth2 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-2 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countProductMonth3="SELECT COUNT(*) AS countProductMonth3 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-3 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countProductMonth4="SELECT COUNT(*) AS countProductMonth4 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-4 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countProductMonth5="SELECT COUNT(*) AS countProductMonth5 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-5 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countProductMonth6="SELECT COUNT(*) AS countProductMonth6 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-6 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProductMonth0="SELECT SUM(GIASP) AS sumProductMonth0 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m')."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProductMonth1="SELECT SUM(GIASP) AS sumProductMonth1 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m', strtotime('-1 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProductMonth2="SELECT SUM(GIASP) AS sumProductMonth2 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m', strtotime('-2 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProductMonth3="SELECT SUM(GIASP) AS sumProductMonth3 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m', strtotime('-3 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProductMonth4="SELECT SUM(GIASP) AS sumProductMonth4 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m', strtotime('-4 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProductMonth5="SELECT SUM(GIASP) AS sumProductMonth5 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m', strtotime('-5 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProductMonth6="SELECT SUM(GIASP) AS sumProductMonth6 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m', strtotime('-6 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
                         }
-                    });
-                    </script>
+                        else{
+                            $sql_countProductMonth0="SELECT COUNT(*) AS countProductMonth0 FROM customer WHERE NGAY LIKE'%".date('Y-m')."%'";
+                            $sql_countProductMonth1="SELECT COUNT(*) AS countProductMonth1 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-1 month'))."%'";
+                            $sql_countProductMonth2="SELECT COUNT(*) AS countProductMonth2 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-2 month'))."%'";
+                            $sql_countProductMonth3="SELECT COUNT(*) AS countProductMonth3 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-3 month'))."%'";
+                            $sql_countProductMonth4="SELECT COUNT(*) AS countProductMonth4 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-4 month'))."%'";
+                            $sql_countProductMonth5="SELECT COUNT(*) AS countProductMonth5 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-5 month'))."%'";
+                            $sql_countProductMonth6="SELECT COUNT(*) AS countProductMonth6 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-6 month'))."%'";
+                            $sql_sumProductMonth0="SELECT SUM(GIASP) AS sumProductMonth0 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m')."%'";
+                            $sql_sumProductMonth1="SELECT SUM(GIASP) AS sumProductMonth1 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m', strtotime('-1 month'))."%'";
+                            $sql_sumProductMonth2="SELECT SUM(GIASP) AS sumProductMonth2 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m', strtotime('-2 month'))."%'";
+                            $sql_sumProductMonth3="SELECT SUM(GIASP) AS sumProductMonth3 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m', strtotime('-3 month'))."%'";
+                            $sql_sumProductMonth4="SELECT SUM(GIASP) AS sumProductMonth4 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m', strtotime('-4 month'))."%'";
+                            $sql_sumProductMonth5="SELECT SUM(GIASP) AS sumProductMonth5 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m', strtotime('-5 month'))."%'";
+                            $sql_sumProductMonth6="SELECT SUM(GIASP) AS sumProductMonth6 FROM customer  natural join product WHERE NGAY LIKE'%".date('Y-m', strtotime('-6 month'))."%'";
+                        }
+                        $result_countProductMonth0=$mysqli->query($sql_countProductMonth0);
+                        $result_countProductMonth1=$mysqli->query($sql_countProductMonth1);
+                        $result_countProductMonth2=$mysqli->query($sql_countProductMonth2);
+                        $result_countProductMonth3=$mysqli->query($sql_countProductMonth3);
+                        $result_countProductMonth4=$mysqli->query($sql_countProductMonth4);
+                        $result_countProductMonth5=$mysqli->query($sql_countProductMonth5);
+                        $result_countProductMonth6=$mysqli->query($sql_countProductMonth6);
+                        $result_sumProductMonth0=$mysqli->query($sql_sumProductMonth0);
+                        $result_sumProductMonth1=$mysqli->query($sql_sumProductMonth1);
+                        $result_sumProductMonth2=$mysqli->query($sql_sumProductMonth2);
+                        $result_sumProductMonth3=$mysqli->query($sql_sumProductMonth3);
+                        $result_sumProductMonth4=$mysqli->query($sql_sumProductMonth4);
+                        $result_sumProductMonth5=$mysqli->query($sql_sumProductMonth5);
+                        $result_sumProductMonth6=$mysqli->query($sql_sumProductMonth6);
+
+                        if (mysqli_num_rows($result_countProductMonth0) > 0) {
+                            $row=$result_countProductMonth0->fetch_assoc();
+                            $dataMonth1[0]=$row['countProductMonth0'];
+                        }
+                        if (mysqli_num_rows($result_countProductMonth1) > 0) {
+                            $row=$result_countProductMonth1->fetch_assoc();
+                            $dataMonth1[1]=$row['countProductMonth1'];
+                        }
+                        if (mysqli_num_rows($result_countProductMonth2) > 0) {
+                            $row=$result_countProductMonth2->fetch_assoc();
+                            $dataMonth1[2]=$row['countProductMonth2'];
+                        }
+                        if (mysqli_num_rows($result_countProductMonth3) > 0) {
+                            $row=$result_countProductMonth3->fetch_assoc();
+                            $dataMonth1[3]=$row['countProductMonth3'];
+                        }
+                        if (mysqli_num_rows($result_countProductMonth4) > 0) {
+                            $row=$result_countProductMonth4->fetch_assoc();
+                            $dataMonth1[4]=$row['countProductMonth4'];
+                        }
+                        if (mysqli_num_rows($result_countProductMonth5) > 0) {
+                            $row=$result_countProductMonth5->fetch_assoc();
+                            $dataMonth1[5]=$row['countProductMonth5'];
+                        }
+                        if (mysqli_num_rows($result_countProductMonth6) > 0) {
+                            $row=$result_countProductMonth6->fetch_assoc();
+                            $dataMonth1[6]=$row['countProductMonth6'];
+                        }
+                        if (mysqli_num_rows($result_sumProductMonth0) > 0) {
+                            $row=$result_sumProductMonth0->fetch_assoc();
+                            if ($row['sumProductMonth0']==null){
+                                $dataMonth2[0]=0;
+                            }
+                            else{
+                                $dataMonth2[0]=$row['sumProductMonth0']/100000000;
+                            }
+                        }
+                        if (mysqli_num_rows($result_sumProductMonth1) > 0) {
+                            $row=$result_sumProductMonth1->fetch_assoc();
+                            if ($row['sumProductMonth1']==null){
+                                $dataMonth2[1]=0;
+                            }
+                            else{
+                                $dataMonth2[1]=$row['sumProductMonth1']/100000000;
+                            }
+                        }
+                        if (mysqli_num_rows($result_sumProductMonth2) > 0) {
+                            $row=$result_sumProductMonth2->fetch_assoc();
+                            if ($row['sumProductMonth2']==null){
+                                $dataMonth2[2]=0;
+                            }
+                            else{
+                                $dataMonth2[2]=$row['sumProductMonth2']/100000000;
+                            }
+                        }
+                        if (mysqli_num_rows($result_sumProductMonth3) > 0) {
+                            $row=$result_sumProductMonth3->fetch_assoc();
+                            if ($row['sumProductMonth3']==null){
+                                $dataMonth2[3]=0;
+                            }
+                            else{
+                                $dataMonth2[3]=$row['sumProductMonth3']/100000000;
+                            }
+                        }
+                        if (mysqli_num_rows($result_sumProductMonth4) > 0) {
+                            $row=$result_sumProductMonth4->fetch_assoc();
+                            if ($row['sumProductMonth4']==null){
+                                $dataMonth2[4]=0;
+                            }
+                            else{
+                                $dataMonth2[4]=$row['sumProductMonth4']/100000000;
+                            }
+                        }
+                        if (mysqli_num_rows($result_sumProductMonth5) > 0) {
+                            $row=$result_sumProductMonth5->fetch_assoc();
+                            if ($row['sumProductMonth5']==null){
+                                $dataMonth2[5]=0;
+                            }
+                            else{
+                                $dataMonth2[5]=$row['sumProductMonth5']/100000000;
+                            }
+                        }
+                        if (mysqli_num_rows($result_sumProductMonth6) > 0) {
+                            $row=$result_sumProductMonth6->fetch_assoc();
+                            if ($row['sumProductMonth6']==null){
+                                $dataMonth2[6]=0;
+                            }
+                            else{
+                                $dataMonth2[6]=$row['sumProductMonth6']/100000000;
+                            }
+                        }
+                        $dataMonth3=[date('Y-m'), date('Y-m', strtotime('-1 month')), date('Y-m', strtotime('-2 month')), date('Y-m', strtotime('-3 month')), date('Y-m', strtotime('-4 month')), date('Y-m', strtotime('-5 month')), date('Y-m', strtotime('-6 month'))];
+                        echo "var dataMonth1 = " . json_encode($dataMonth1) . ";";
+                        echo "var dataMonth2 = " . json_encode($dataMonth2) . ";";
+                        echo "var dataMonth3 = " . json_encode($dataMonth3) . ";";
+                    ?>
+                        var ctx = document.getElementById('myChartMonth').getContext('2d');
+                        var myChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: dataMonth3,
+                                datasets: [{
+                                        label: 'Số sản phẩm bán được(chiếc)',
+                                        data: dataMonth1,
+                                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                        borderColor: 'rgba(255, 99, 132, 1)',
+                                        borderWidth: 1
+                                    },
+                                    {
+                                        label: 'Tổng số tiền bán được( trăm triệu đồng)',
+                                        data: dataMonth2,
+                                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        borderWidth: 1
+                                    }
+                                ]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                        </script>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
