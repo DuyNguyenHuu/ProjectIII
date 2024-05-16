@@ -12,6 +12,7 @@ require_once "database.php";
     <title>VC Gara</title>
     <link rel="stylesheet" href="style.css">
     <script src="element.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="signin-page">
@@ -233,6 +234,7 @@ require_once "database.php";
                     </div>
                 </div>
             </div>
+
             <div class="tabContent" id="customer">
                 <!-- Form tìm kiếm khách hàng -->
                 <div>
@@ -921,6 +923,7 @@ require_once "database.php";
                     ?>
                 </div>
             </div>
+
             <div class="tabContent" id="infor">
                 <div style="width:300%">
                     <?php
@@ -956,6 +959,7 @@ require_once "database.php";
                     </form>
                 </div>
             </div>
+
             <div class="tabContent" id="statistical">
                 <div style="display:flex;justify-content: space-around;">
                     <?php
@@ -1027,15 +1031,202 @@ require_once "database.php";
                         }
                         if (mysqli_num_rows($result_sumProductSale) > 0) {
                             $row=$result_sumProductSale->fetch_assoc();
-                            echo "<div class='statistical'>
+                            if ($row['sumProductSale']==null){
+                                echo "<div class='statistical'>
+                                    <label>Tổng tiền bán hôm nay: 0</label>
+                                </div>";
+                            }
+                            else{
+                                echo "<div class='statistical'>
                                     <label>Tổng tiền bán hôm nay: ".$row['sumProductSale']."</label>
                                 </div>";
+                            }
                         }
                     ?>
                 </div>
+                <div>
+                    <h1>Biểu đồ bán hàng trong 7 ngày vừa qua</h1>
+                    <canvas id="myChart" width="800" height="300"></canvas>
+                    <script>
+                    <?php
+                        $today=date('Y-m-d');
+                        if ($_SESSION["role"]==0){
+                            $sql_countProduct0="SELECT COUNT(*) AS countProduct0 FROM customer WHERE NGAY='".date('Y-m-d')."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countProduct1="SELECT COUNT(*) AS countProduct1 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-1 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countProduct2="SELECT COUNT(*) AS countProduct2 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-2 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countProduct3="SELECT COUNT(*) AS countProduct3 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-3 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countProduct4="SELECT COUNT(*) AS countProduct4 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-4 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countProduct5="SELECT COUNT(*) AS countProduct5 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-5 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_countProduct6="SELECT COUNT(*) AS countProduct6 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-6 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProduct0="SELECT SUM(GIASP) AS sumProduct0 FROM customer  natural join product WHERE NGAY='".date('Y-m-d')."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProduct1="SELECT SUM(GIASP) AS sumProduct1 FROM customer  natural join product WHERE NGAY='".date('Y-m-d', strtotime('-1 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProduct2="SELECT SUM(GIASP) AS sumProduct2 FROM customer  natural join product WHERE NGAY='".date('Y-m-d', strtotime('-2 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProduct3="SELECT SUM(GIASP) AS sumProduct3 FROM customer  natural join product WHERE NGAY='".date('Y-m-d', strtotime('-3 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProduct4="SELECT SUM(GIASP) AS sumProduct4 FROM customer  natural join product WHERE NGAY='".date('Y-m-d', strtotime('-4 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProduct5="SELECT SUM(GIASP) AS sumProduct5 FROM customer  natural join product WHERE NGAY='".date('Y-m-d', strtotime('-5 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
+                            $sql_sumProduct6="SELECT SUM(GIASP) AS sumProduct6 FROM customer  natural join product WHERE NGAY='".date('Y-m-d', strtotime('-6 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
+                        }
+                        else{
+                            $sql_countProduct0="SELECT COUNT(*) AS countProduct0 FROM customer WHERE NGAY='".date('Y-m-d')."'";
+                            $sql_countProduct1="SELECT COUNT(*) AS countProduct1 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-1 day'))."'";
+                            $sql_countProduct2="SELECT COUNT(*) AS countProduct2 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-2 day'))."'";
+                            $sql_countProduct3="SELECT COUNT(*) AS countProduct3 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-3 day'))."'";
+                            $sql_countProduct4="SELECT COUNT(*) AS countProduct4 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-4 day'))."'";
+                            $sql_countProduct5="SELECT COUNT(*) AS countProduct5 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-5 day'))."'";
+                            $sql_countProduct6="SELECT COUNT(*) AS countProduct6 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-6 day'))."'";
+                            $sql_sumProduct0="SELECT SUM(GIASP) AS sumProduct0 FROM customer  natural join product WHERE NGAY='".date('Y-m-d')."'";
+                            $sql_sumProduct1="SELECT SUM(GIASP) AS sumProduct1 FROM customer  natural join product WHERE NGAY='".date('Y-m-d', strtotime('-1 day'))."'";
+                            $sql_sumProduct2="SELECT SUM(GIASP) AS sumProduct2 FROM customer  natural join product WHERE NGAY='".date('Y-m-d', strtotime('-2 day'))."'";
+                            $sql_sumProduct3="SELECT SUM(GIASP) AS sumProduct3 FROM customer  natural join product WHERE NGAY='".date('Y-m-d', strtotime('-3 day'))."'";
+                            $sql_sumProduct4="SELECT SUM(GIASP) AS sumProduct4 FROM customer  natural join product WHERE NGAY='".date('Y-m-d', strtotime('-4 day'))."'";
+                            $sql_sumProduct5="SELECT SUM(GIASP) AS sumProduct5 FROM customer  natural join product WHERE NGAY='".date('Y-m-d', strtotime('-5 day'))."'";
+                            $sql_sumProduct6="SELECT SUM(GIASP) AS sumProduct6 FROM customer  natural join product WHERE NGAY='".date('Y-m-d', strtotime('-6 day'))."'";
+                        }
+                        $result_countProduct0=$mysqli->query($sql_countProduct0);
+                        $result_countProduct1=$mysqli->query($sql_countProduct1);
+                        $result_countProduct2=$mysqli->query($sql_countProduct2);
+                        $result_countProduct3=$mysqli->query($sql_countProduct3);
+                        $result_countProduct4=$mysqli->query($sql_countProduct4);
+                        $result_countProduct5=$mysqli->query($sql_countProduct5);
+                        $result_countProduct6=$mysqli->query($sql_countProduct6);
+                        $result_sumProduct0=$mysqli->query($sql_sumProduct0);
+                        $result_sumProduct1=$mysqli->query($sql_sumProduct1);
+                        $result_sumProduct2=$mysqli->query($sql_sumProduct2);
+                        $result_sumProduct3=$mysqli->query($sql_sumProduct3);
+                        $result_sumProduct4=$mysqli->query($sql_sumProduct4);
+                        $result_sumProduct5=$mysqli->query($sql_sumProduct5);
+                        $result_sumProduct6=$mysqli->query($sql_sumProduct6);
+
+                        if (mysqli_num_rows($result_countProduct0) > 0) {
+                            $row=$result_countProduct0->fetch_assoc();
+                            $data1[0]=$row['countProduct0'];
+                        }
+                        if (mysqli_num_rows($result_countProduct1) > 0) {
+                            $row=$result_countProduct1->fetch_assoc();
+                            $data1[1]=$row['countProduct1'];
+                        }
+                        if (mysqli_num_rows($result_countProduct2) > 0) {
+                            $row=$result_countProduct2->fetch_assoc();
+                            $data1[2]=$row['countProduct2'];
+                        }
+                        if (mysqli_num_rows($result_countProduct3) > 0) {
+                            $row=$result_countProduct3->fetch_assoc();
+                            $data1[3]=$row['countProduct3'];
+                        }
+                        if (mysqli_num_rows($result_countProduct4) > 0) {
+                            $row=$result_countProduct4->fetch_assoc();
+                            $data1[4]=$row['countProduct4'];
+                        }
+                        if (mysqli_num_rows($result_countProduct5) > 0) {
+                            $row=$result_countProduct5->fetch_assoc();
+                            $data1[5]=$row['countProduct5'];
+                        }
+                        if (mysqli_num_rows($result_countProduct6) > 0) {
+                            $row=$result_countProduct6->fetch_assoc();
+                            $data1[6]=$row['countProduct6'];
+                        }
+                        if (mysqli_num_rows($result_sumProduct0) > 0) {
+                            $row=$result_sumProduct0->fetch_assoc();
+                            if ($row['sumProduct0']==null){
+                                $data2[0]=0;
+                            }
+                            else{
+                                $data2[0]=$row['sumProduct0']/100000000;
+                            }
+                        }
+                        if (mysqli_num_rows($result_sumProduct1) > 0) {
+                            $row=$result_sumProduct1->fetch_assoc();
+                            if ($row['sumProduct1']==null){
+                                $data2[1]=0;
+                            }
+                            else{
+                                $data2[1]=$row['sumProduct1']/100000000;
+                            }
+                        }
+                        if (mysqli_num_rows($result_sumProduct2) > 0) {
+                            $row=$result_sumProduct2->fetch_assoc();
+                            if ($row['sumProduct2']==null){
+                                $data2[2]=0;
+                            }
+                            else{
+                                $data2[2]=$row['sumProduct2']/100000000;
+                            }
+                        }
+                        if (mysqli_num_rows($result_sumProduct3) > 0) {
+                            $row=$result_sumProduct3->fetch_assoc();
+                            if ($row['sumProduct3']==null){
+                                $data2[3]=0;
+                            }
+                            else{
+                                $data2[3]=$row['sumProduct3']/100000000;
+                            }
+                        }
+                        if (mysqli_num_rows($result_sumProduct4) > 0) {
+                            $row=$result_sumProduct4->fetch_assoc();
+                            if ($row['sumProduct4']==null){
+                                $data2[4]=0;
+                            }
+                            else{
+                                $data2[4]=$row['sumProduct4']/100000000;
+                            }
+                        }
+                        if (mysqli_num_rows($result_sumProduct5) > 0) {
+                            $row=$result_sumProduct5->fetch_assoc();
+                            if ($row['sumProduct5']==null){
+                                $data2[5]=0;
+                            }
+                            else{
+                                $data2[5]=$row['sumProduct5']/100000000;
+                            }
+                        }
+                        if (mysqli_num_rows($result_sumProduct6) > 0) {
+                            $row=$result_sumProduct6->fetch_assoc();
+                            if ($row['sumProduct6']==null){
+                                $data2[6]=0;
+                            }
+                            else{
+                                $data2[6]=$row['sumProduct6']/100000000;
+                            }
+                        }
+                        $data3=[date('Y-m-d'), date('Y-m-d', strtotime('-1 day')), date('Y-m-d', strtotime('-2 day')), date('Y-m-d', strtotime('-3 day')), date('Y-m-d', strtotime('-4 day')), date('Y-m-d', strtotime('-5 day')), date('Y-m-d', strtotime('-6 day'))];
+                        echo "var data1 = " . json_encode($data1) . ";";
+                        echo "var data2 = " . json_encode($data2) . ";";
+                        echo "var data3 = " . json_encode($data3) . ";";
+                    ?>
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    var myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data3,
+                            datasets: [{
+                                    label: 'Số sản phẩm bán được(chiếc)',
+                                    data: data1,
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Tổng số tiền bán được( trăm triệu đồng)',
+                                    data: data2,
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                    </script>
+                </div>
             </div>
         </div>
-
+    </div>
 </body>
 
 </html>
