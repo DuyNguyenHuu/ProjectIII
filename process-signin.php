@@ -18,12 +18,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <input type='hidden' name='accountHidden' value=" . $account_signin . ">
                     </form>
                     <script>document.getElementById('hidden').submit()</script>";
-                    } else
-                        die ("<script>alert('Đăng nhập thành công!');window.location.href = 'home.php';</script>");
-                } else
+                    } 
+                    else{
+                        if($_SESSION["role"]<1){
+                            die ("<script>alert('Vui lòng đợi sếp xác nhận tài khoản!');window.location.href = 'index.php';</script>");
+                        }
+                        else{
+                            die ("<script>alert('Đăng nhập thành công!');window.location.href = 'home.php';</script>");
+                        }
+                    }
+                } 
+                else{
                     die ("<script>alert('Mật khẩu không chính xác!');window.location.href = 'index.php';</script>");
-            } else
+                }
+            } 
+            else{
                 die ("<script>alert('Tài khoản không chính xác!".$row["ACCOUNT"].$account_signin."');window.location.href = 'index.php';</script>");
+            }
         }
     }
     else{

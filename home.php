@@ -32,6 +32,8 @@ require_once "database.php";
             <button class="tabLink" id="buttonProduct" onclick="openTab(event, 'product', true)">SẢN PHẨM</button>
             <button class="tabLink" id="buttonMaintenanceList" onclick="openTab(event, 'maintenanceList', true)">DANH
                 SÁCH BẢO DƯỠNG XE</button>
+            <button class="tabLink" id="buttonDecentralization" onclick="openTab(event, 'decentralization', true)">PHÂN
+                QUYỀN</button>
             <button class="tabLink" id="buttonStatistical" onclick="openTab(event, 'statistical', true)">THỐNG
                 KÊ</button>
             <button class="tabLink" id="buttonInfor" onclick="openTab(event, 'infor', true)">
@@ -489,7 +491,7 @@ require_once "database.php";
                     <div>
                         <!--Hiển thị danh sách nhân viên-->
                         <?php
-                            if($_SESSION["role"]>0){
+                            if($_SESSION["role"]>1){
                                 $sql_allStaff = "SELECT * FROM STAFF";
                             }
                             else{
@@ -566,7 +568,7 @@ require_once "database.php";
                                     </form>
                                 </div>";
                 //Hiển thị danh sách tìm kiếm
-                        if($_SESSION["role"]>0){
+                        if($_SESSION["role"]>1){
                             $sql_searchProduct="SELECT * FROM PRODUCT WHERE TENSP LIKE '%".$_POST['searchProduct']."%' OR MASP LIKE '%".$_POST['searchProduct']."%' ";
                         }
                         else{
@@ -794,7 +796,7 @@ require_once "database.php";
                                     <div class='boxDate' style='width:12.05%;'>Ngày bảo dưỡng gần nhất</div>
                                 </div>
                             </div>";
-                        if($_SESSION["role"]>0){
+                        if($_SESSION["role"]>1){
                             $sql_searchMaintenance="SELECT * FROM CUSTOMER NATURAL JOIN PRODUCT WHERE TENKH LIKE '%".$_POST['searchMaintenance']."%'";
                         }
                         else{
@@ -856,7 +858,7 @@ require_once "database.php";
                     <div>
                         <div>
                             <?php
-                                if($_SESSION["role"]>0){
+                                if($_SESSION["role"]>1){
                                     $sql_listProduct = "SELECT * FROM CUSTOMER NATURAL JOIN PRODUCT ORDER BY NGAY DESC";
                                 }
                                 else{
@@ -937,7 +939,7 @@ require_once "database.php";
                                         <label>Địa chỉ: </label>".$row["ADDRESS"]."<br>
                                         <label>Số điện thoại: </label>".$row["CONTACT"]."<br>
                                         <label>Email: </label>".$row["ACCOUNT"]."<br>";
-                                if ($row["ROLE"]==0){
+                                if ($row["ROLE"]==1){
                                     echo"<label>Vị trí: </label>Quản lý<br>";
                                 }
                                 else{
@@ -958,6 +960,43 @@ require_once "database.php";
                         <button type="submit">Thay đổi mật khẩu</button>
                     </form>
                 </div>
+            </div>
+
+            <div class="tabContent" id="decentralization">
+                <?php
+                    $sql_accountRole="SELECT * FROM `account` WHERE ROLE='0'";
+                    $result_accountRole=$mysqli->query($sql_accountRole);
+                    echo"<div style='width:1200px'>
+                        <h3>Danh sách đăng ký quản lý</h3>
+                        <div class='allRole'>";
+                    if (mysqli_num_rows($result_accountRole) > 0) {
+                        while ($row = mysqli_fetch_assoc($result_accountRole)) {
+                            echo "<div class='oneRole'>
+                                    <form method='POST'>
+                                        <label>Mã:</label><input name='idRole' value='" . $row['ID'] . "'><br>
+                                        <label>Họ tên: </label>".$row["NAME"]."<br>
+                                        <label>Địa chỉ: </label>".$row["ADDRESS"]."<br>
+                                        <label>Số điện thoại: </label>".$row["CONTACT"]."<br>
+                                        <label>Email: </label>".$row["ACCOUNT"]."<br>
+                                        <button type='submit' name='agree'>Đồng ý</button>
+                                        <button type='submit' name='refuse'>Từ chối</button>
+                                    </form>";
+                            if (isset($_POST["agree"])){
+                                $sql_updateRole="UPDATE `account` SET `ROLE`=1 WHERE ID='".$_POST["idRole"]."'";
+                                $mysqli->query($sql_updateRole);
+                                die("<script>alert('Bạn đã thêm quản lý thành công!');window.location.href = 'home.php';</script>");
+                            }
+                            if (isset($_POST["refuse"])){
+                                $sql_updateRole="DELETE FROM `account` WHERE ID='".$_POST["idRole"]."'";
+                                $mysqli->query($sql_updateRole);
+                                die("<script>alert('Bạn đã xóa yêu cầu thành công!');window.location.href = 'home.php';</script>");
+                            }
+                            echo "</div>";
+                        }
+                    }
+                    echo"</div>
+                        </div>";
+                ?>
             </div>
 
             <div class="tabContent" id="statistical">
@@ -984,7 +1023,7 @@ require_once "database.php";
                 </div>
                 <div style="display:flex;justify-content: space-around;">
                     <?php
-                        if ($_SESSION["role"]==0){
+                        if ($_SESSION["role"]==1){
                             $sql_countStaff="SELECT COUNT(*) AS countStaff FROM staff WHERE NGUOIQL='".$_SESSION["email"]."'";
                             $sql_countCustomer="SELECT COUNT(DISTINCT TENKH) AS countCustomer FROM customer WHERE NGUOIQL='".$_SESSION["email"]."'";
                         }
@@ -1012,7 +1051,7 @@ require_once "database.php";
                 <div style="display:flex;justify-content: space-around;">
                     <?php
                         $today=date('Y-m-d');
-                        if ($_SESSION["role"]==0){
+                        if ($_SESSION["role"]==1){
                             $sql_countProductSale="SELECT COUNT(*) AS countProductSale FROM customer WHERE NGAY='".$today."' AND NGUOIQL='".$_SESSION["email"]."'";
                             $sql_sumProductSale="SELECT SUM(GIASP) AS sumProductSale FROM customer  natural join product WHERE NGAY='".$today."' AND NGUOIQL='".$_SESSION["email"]."'";
                         }
@@ -1052,7 +1091,7 @@ require_once "database.php";
                         <script>
                         <?php
                         $today=date('Y-m-d');
-                        if ($_SESSION["role"]==0){
+                        if ($_SESSION["role"]==1){
                             $sql_countProduct0="SELECT COUNT(*) AS countProduct0 FROM customer WHERE NGAY='".date('Y-m-d')."' AND NGUOIQL='".$_SESSION["email"]."'";
                             $sql_countProduct1="SELECT COUNT(*) AS countProduct1 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-1 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
                             $sql_countProduct2="SELECT COUNT(*) AS countProduct2 FROM customer WHERE NGAY='".date('Y-m-d', strtotime('-2 day'))."' AND NGUOIQL='".$_SESSION["email"]."'";
@@ -1233,7 +1272,7 @@ require_once "database.php";
                         <script>
                         <?php
                         $today=date('Y-m');
-                        if ($_SESSION["role"]==0){
+                        if ($_SESSION["role"]==1){
                             $sql_countProductMonth0="SELECT COUNT(*) AS countProductMonth0 FROM customer WHERE NGAY LIKE'%".date('Y-m')."%' AND NGUOIQL='".$_SESSION["email"]."'";
                             $sql_countProductMonth1="SELECT COUNT(*) AS countProductMonth1 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-1 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";
                             $sql_countProductMonth2="SELECT COUNT(*) AS countProductMonth2 FROM customer WHERE NGAY LIKE'%".date('Y-m', strtotime('-2 month'))."%' AND NGUOIQL='".$_SESSION["email"]."'";

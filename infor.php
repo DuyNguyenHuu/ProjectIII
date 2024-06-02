@@ -52,7 +52,7 @@
         echo $sql_update;
         $mysqli->query($sql_update);
 
-        die("<script>alert('Bạn đã cập nhật thành công!');window.location.href = 'home.php';</script>");
+        die("<script>alert('Bạn đã cập nhật thành công!');window.location.href = 'index.php';</script>");
     }
     ?>
 </body>

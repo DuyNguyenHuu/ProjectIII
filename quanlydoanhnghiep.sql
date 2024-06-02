@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th5 07, 2024 lúc 02:45 AM
+-- Thời gian đã tạo: Th6 02, 2024 lúc 12:09 PM
 -- Phiên bản máy phục vụ: 10.4.28-MariaDB
 -- Phiên bản PHP: 8.1.17
 
@@ -34,7 +34,7 @@ CREATE TABLE `account` (
   `NAME` text DEFAULT NULL,
   `ADDRESS` text DEFAULT NULL,
   `CONTACT` text DEFAULT NULL,
-  `ROLE` bit(1) NOT NULL
+  `ROLE` int(2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -42,10 +42,15 @@ CREATE TABLE `account` (
 --
 
 INSERT INTO `account` (`ID`, `ACCOUNT`, `PASSWORD`, `NAME`, `ADDRESS`, `CONTACT`, `ROLE`) VALUES
-('CHUNGNH', 'chung@gmail.com', 'Duyyl220302', 'Nguyễn Hữu Chung', 'Yên Lạc, Vĩnh Phúc', '0826321476', b'0'),
-('DOANNH', 'doan@gmail.com', 'Duyyl220302', 'Nguyễn Hữu Đoàn', 'Vĩnh Phúc', '0977163046', b'0'),
-('DUYNH', 'duy@gmail.com', 'Duyyl220302', 'Nguyễn Hữu Duy', 'Yên Đồng, Yên Lạc, Vĩnh Phúc', '0985963473', b'1'),
-('THANGNH', 'thang@gmail.com', 'Duyyl220302', 'Nguyễn Hữu Thắng', 'Yên Đồng, Yên Lạc', '0987531222', b'0');
+('CHUNGNH', 'chung@gmail.com', 'Duyyl220302', 'Nguyễn Hữu Chung', 'Yên Lạc, Vĩnh Phúc', '0826321476', 1),
+('DOANNH', 'doan@gmail.com', 'Duyyl220302', 'Nguyễn Hữu Đoàn', 'Vĩnh Phúc', '0977163046', 1),
+('DUYNH', 'duy@gmail.com', 'Duyyl220302', 'Nguyễn Hữu Duy', 'Yên Đồng, Yên Lạc, Vĩnh Phúc', '0985963473', 2),
+('LOANNV', 'loan@gmail.com', 'Duyyl220302', 'Nguyễn Văn Loan', 'Tam Hồng, Yên Lạc, Vĩnh Phúc', '0985963473', 0),
+('NHANHNV', 'nhanh@gmail.com', 'Duyyl220302', 'Nguyễn Văn Nhanh', 'Tam Hồng, Yên Lạc, Vĩnh Phúc', '0985963473', 0),
+('NHONNV', 'nhon@gmail.com', 'Duyyl220302', 'Nguyễn Văn Nhộn', 'Tam Hồng, Yên Lạc, Vĩnh Phúc', '0985963473', 0),
+('THAMNV', 'tham@gmail.com', 'Duyyl220302', 'Nguyễn Văn Thắm', 'Tam Hồng, Yên Lạc, Vĩnh Phúc', '0985963473', 0),
+('THANGNH', 'thang@gmail.com', 'Duyyl12a1', 'Nguyễn Hữu Thắng', 'Yên Đồng, Yên Lạc', '0985963473', 1),
+('TUANNV', 'tuan@gmail.com', 'Duyyl220302', 'Nguyễn Văn Tuấn', 'Yên Đồng, Yên Lạc, Vĩnh Phúc', '0985963473', 0);
 
 -- --------------------------------------------------------
 
@@ -93,7 +98,7 @@ INSERT INTO `customer` (`ID`, `TENKH`, `DIACHI`, `SODIENTHOAI`, `MASP`, `NGAY`, 
 (68, 'Lại Quốc Trung', 'Quảng Ninh', '0875695423', 'CBR150R', '2022-11-26', 'chung@gmail.com'),
 (69, 'Nguyễn Đức Huy', 'Hải Phòng', '0875695423', 'LEAD125', '2022-12-26', 'chung@gmail.com'),
 (70, 'Phan Duy', 'Hải Phòng', '0875695423', 'SH160i', '2022-05-29', 'chung@gmail.com'),
-(71, 'Bùi Anh Tuấn', 'Vĩnh Phúc', '0875695423', 'CBR150R', '0000-00-00', 'chung@gmail.com'),
+(71, 'Bùi Anh Tuấn', 'Vĩnh Phúc', '0875695423', 'CBR150R', '2024-05-16', 'chung@gmail.com'),
 (72, 'Lại Quốc Trung', 'Quảng Ninh', '0875695423', 'LEAD125', '2024-03-26', 'chung@gmail.com'),
 (73, 'Lại Quốc Trung', 'Quảng Ninh', '0875695423', 'SH160i', '2024-03-26', 'chung@gmail.com'),
 (74, 'Lại Quốc Trung', 'Quảng Ninh', '0875695423', 'CBR150R', '2024-03-26', 'chung@gmail.com'),
@@ -131,7 +136,15 @@ INSERT INTO `customer` (`ID`, `TENKH`, `DIACHI`, `SODIENTHOAI`, `MASP`, `NGAY`, 
 (106, 'Bùi Thức Nam', 'Hà Nội', '0356748547', 'SH350i', '2024-03-26', 'doan@gmail.com'),
 (107, 'Bùi Thức Nam', 'Hà Nội', '0356748547', 'Vario 160', '2024-03-26', 'doan@gmail.com'),
 (108, 'Bùi Thức Nam', 'Hà Nội', '0356748547', 'WAVERSX', '2024-03-26', 'doan@gmail.com'),
-(109, 'Bùi Thức Nam', 'Hà Nội', '0356748547', 'X2024', '2024-03-26', 'doan@gmail.com');
+(109, 'Bùi Thức Nam', 'Hà Nội', '0356748547', 'X2024', '2024-03-26', 'doan@gmail.com'),
+(110, 'Nguyễn Minh Vũ', 'Vĩnh Tường, Vĩnh Phúc', '0987564256', 'ALPHA110', '2024-05-15', 'thang@gmail.com'),
+(111, 'Nguyễn Minh Vũ', 'Vĩnh Tường, Vĩnh Phúc', '0987564256', 'CLUB125', '2024-05-15', 'thang@gmail.com'),
+(112, 'Nguyễn Minh Vũ', 'Vĩnh Tường, Vĩnh Phúc', '0987564256', 'LEAD125', '2024-05-15', 'thang@gmail.com'),
+(113, 'Nguyễn Minh Vũ', 'Vĩnh Tường, Vĩnh Phúc', '0987564256', 'SH160i', '2024-05-15', 'thang@gmail.com'),
+(114, 'Nguyễn Minh Vũ', 'Vĩnh Tường, Vĩnh Phúc', '0987564256', 'SH350i', '2024-05-15', 'thang@gmail.com'),
+(120, 'Trương Công Danh', 'Nam Định', '0859634589', 'CLUB125', '2024-05-16', 'thang@gmail.com'),
+(121, 'Trương Công Danh', 'Nam Định', '0859634589', 'SH160i', '2024-05-16', 'thang@gmail.com'),
+(122, 'Trương Công Danh', 'Nam Định', '0859634589', 'SH350i', '2024-05-16', 'thang@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -152,7 +165,7 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`MASP`, `TENSP`, `GIASP`, `THONGTINSP`, `SOLUONG`) VALUES
-('ALPHA110', 'Wave Alpha 110', 18000000, '', 2),
+('ALPHA110', 'Wave Alpha 110', 18000000, '', 3),
 ('BLADE2023', 'Blade 2023', 19000000, '', 46),
 ('CBR150R', 'Honda CBR150R', 72300000, '', 23),
 ('CLUB125', 'Super Club 125', 86000000, '', 43),
@@ -247,7 +260,7 @@ ALTER TABLE `staff`
 -- AUTO_INCREMENT cho bảng `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
