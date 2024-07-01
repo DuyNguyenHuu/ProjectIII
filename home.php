@@ -462,8 +462,8 @@ require_once "database.php";
                                             <td>
                                                 <form method='POST'>
                                                     <input type='hidden' name='idOneStaff' value='" . $row['MANV'] . "'><br>
-                                                    <button type='submit' name='updateStaff'>Chỉnh sửa</button>
-                                                    <button type='submit' name='deleteStaff'>Xóa</button>
+                                                    <button type='submit' name='updateStaff' style='background-color:#ffc107;'>Chỉnh sửa</button>
+                                                    <button type='submit' name='deleteStaff' style='background-color:#dc3545; color:white'>Xóa</button>
                                                 </form>
                                             </td>
                                         </tr>";
@@ -565,8 +565,8 @@ require_once "database.php";
                                             <td>
                                                 <form method='POST'>
                                                     <input type='hidden' name='idOneStaff' value='" . $row['MANV'] . "'><br>
-                                                    <button type='submit' name='updateStaff'>Chỉnh sửa</button>
-                                                    <button type='submit' name='deleteStaff'>Xóa</button>
+                                                    <button type='submit' name='updateStaff' style='background-color:#ffc107;'>Chỉnh sửa</button>
+                                                    <button type='submit' name='deleteStaff' style='background-color:#dc3545; color:white'>Xóa</button>
                                                 </form>
                                             </td>
                                         </tr>";
@@ -659,14 +659,14 @@ require_once "database.php";
                                     <td>
                                         <form method='POST'>
                                             <input type='hidden' name='idOneProduct' value='" . $row['MASP'] . "'><br>
-                                            <button type='submit' name='importProduct'>Nhập hàng</button>
-                                            <button type='submit' name='updateProduct'>Chỉnh sửa</button>
+                                            <button type='submit' name='importProduct' style='background-color:#17a2b8; color:white'>Nhập hàng</button>
+                                            <button type='submit' name='updateProduct' style='background-color:#ffc107;'>Chỉnh sửa</button>
                                         </form>
                                         <div id='importNumberProduct" . $row['MASP'] . "' style='display:none;'>
                                         <form method='POST'>
                                             <input type='hidden' name='hiddenIdProduct' value='" .$row['MASP'] . "'>
                                             <input type='number' min=1 name='numberImport' placeholder='Số lượng nhập'>
-                                            <button type='submit' name='confirmProduct'>Thêm</button>
+                                            <button type='submit' name='confirmProduct' style='background-color:#28a745; color:white'>Thêm</button>
                                         </form>
                                     </div>
                                     </td>";
@@ -775,14 +775,14 @@ require_once "database.php";
                                         <td>
                                             <form method='POST'>
                                                 <input type='hidden' name='idOneProduct' value='" . $row['MASP'] . "'readonly='true'><br>
-                                                <button type='submit' name='importProduct'>Nhập hàng</button>
-                                                <button type='submit' name='updateProduct'>Chỉnh sửa</button>
+                                                <button type='submit' name='importProduct' style='background-color:#17a2b8; color:white'>Nhập hàng</button>
+                                                <button type='submit' name='updateProduct' style='background-color:#ffc107;'>Chỉnh sửa</button>
                                             </form>
                                             <div id='importNumberProduct" . $row['MASP'] . "' style='display:none;'>
                                             <form method='POST'>
                                                 <input type='hidden' name='hiddenIdProduct' value='" .$row['MASP'] . "'>
                                                 <input type='number' min=1 name='numberImport' placeholder='Số lượng nhập'>
-                                                <button type='submit' name='confirmProduct'>Thêm</button>
+                                                <button type='submit' name='confirmProduct' style='background-color:#28a745; color:white'>Thêm</button>
                                             </form>
                                         </div>
                                         </td>
@@ -898,7 +898,7 @@ require_once "database.php";
                                             <td id='oldDate".$row['ID']."'>
                                                 <form method='POST'>
                                                     <input type='hidden' name='idHidden' value='".$row['ID']."'>
-                                                    <button type='submit' name='updateMaintenance' >Cập nhật</button>
+                                                    <button type='submit' name='updateMaintenance' style='background-color:#ffc107;'>Cập nhật</button>
                                                 </form>
                                             </td>
                                             <div id='updateDate".$row['ID']."' class='boxNewDate' style='display:none;'>
@@ -907,7 +907,7 @@ require_once "database.php";
                                                     <input type='hidden' name='nameCustomer' value='".$row['TENKH']."'>
                                                     <input type='hidden' name='date' value='".$row['NGAY']."'>
                                                     <input type='date' name='newDate'>
-                                                    <button type='submit' name='updateNewDate'>Cập nhật</button>
+                                                    <button type='submit' name='updateNewDate' style='background-color:#28a745;color:white;'>Cập nhật</button>
                                                 </form>
                                             </div>
                                         </tr>";
@@ -970,7 +970,7 @@ require_once "database.php";
                                                     <td id='oldDate".$row['ID']."'>
                                                         <form method='POST'>
                                                             <input type='hidden' name='idHidden' value='".$row['ID']."'>
-                                                            <button type='submit' name='updateMaintenance'>Cập nhật</button>
+                                                            <button type='submit' name='updateMaintenance' style='background-color:#ffc107;'>Cập nhật</button>
                                                         </form>
                                                     </td>
                                                     <div id='updateDate".$row['ID']."' class='boxNewDate' style='display:none;'>
@@ -979,7 +979,7 @@ require_once "database.php";
                                                             <input type='hidden' name='nameCustomer' value='".$row['TENKH']."'>
                                                             <input type='hidden' name='date' value='".$row['NGAY']."'>
                                                             <input type='date' name='newDate'>
-                                                            <button type='submit' name='updateNewDate'>Cập nhật</button>
+                                                            <button type='submit' name='updateNewDate' style='background-color:#28a745;color:white;'>Cập nhật</button>
                                                         </form>
                                                     </div>
                                                 </tr>";
@@ -1072,8 +1072,8 @@ require_once "database.php";
                                     <td>
                                         <form method='POST'>
                                             <input type='hidden' name='idRole' value='" . $row['ID'] . "'>
-                                            <button type='submit' name='agree'>Đồng ý</button>
-                                            <button type='submit' name='refuse'>Từ chối</button>
+                                            <button type='submit' name='agree' style='background-color:#28a745;color:white;'>Đồng ý</button>
+                                            <button type='submit' name='refuse' style='background-color:#dc3545;color:white;'>Từ chối</button>
                                         </form>
                                     </td>";
                             if (isset($_POST["agree"])){
