@@ -115,25 +115,39 @@ require_once "database.php";
                         </script>";
                         // Kiểm tra vai trò của từng người quản lý
                         if($_SESSION["role"]>0){
-                            $sql_searchOrder="SELECT * FROM CUSTOMER NATURAL JOIN PRODUCT WHERE TENKH LIKE '%".$_POST['search']."%'";
+                            $sql_searchOrder="SELECT * FROM CUSTOMER NATURAL JOIN PRODUCT WHERE TENKH LIKE '%".$_POST['search']."%' LIMIT 10";
                         }
                         else{
-                            $sql_searchOrder="SELECT * FROM CUSTOMER NATURAL JOIN PRODUCT WHERE NGUOIQL='" . $_SESSION["email"] . "' AND TENKH LIKE '%".$_POST['search']."%'";
+                            $sql_searchOrder="SELECT * FROM CUSTOMER NATURAL JOIN PRODUCT WHERE NGUOIQL='" . $_SESSION["email"] . "' AND TENKH LIKE '%".$_POST['search']."%' LIMIT 10";
                         }
                         $result_searchOrder=$mysqli->query($sql_searchOrder);
                         // Hiển thị danh sách các đơn hàng tìm kiếm
                         if (mysqli_num_rows($result_searchOrder) > 0) {
-                            echo"<div style='display:flex;'>";
+                            echo"<h3>Danh sách 10 đơn hàng gần nhất của ".$_POST['search']."</h3>
+                                <table>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên khách hàng</th>
+                                        <th>Địa chỉ</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Ngày mua</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Giá</th>
+                                    </tr>";
+                            $countOrder=1;
                             while ($row = mysqli_fetch_assoc($result_searchOrder)) {
-                                echo "<div class='oneCustomerOrder' style='width:25%'>
-                                    <label>Tên khách hàng: </label>" . $row['TENKH'] . "<br>
-                                    <label>Địa chỉ: </label>" . $row['DIACHI'] . "<br>
-                                    <label>Số điện thoại: </label>" . $row['SODIENTHOAI'] . "<br>
-                                    <label>Ngày mua: </label>" . $row['NGAY'] . "<br>
-                                    <label>Sản phẩm: </label>" . $row['TENSP'] . " - " . $row['GIASP'] . "VNĐ <br>
-                                </div>";
+                                echo "<tr>
+                                    <td>".$countOrder."</td>
+                                    <td>" . $row['TENKH'] . "</td>
+                                    <td>" . $row['DIACHI'] . "</td>
+                                    <td>" . $row['SODIENTHOAI'] . "</td>
+                                    <td>" . $row['NGAY'] . "</td>
+                                    <td>" . $row['TENSP'] . "</td>
+                                    <td>" . $row['GIASP'] . "</td>
+                                </tr>";
+                                $countOrder++;
                             }
-                            echo"</div>";
+                            echo"</table>";
                         }
                         else{
                             echo"<div style='color:red;font-weight:700;'>Không có dữ liệu tìm kiếm</div>";
@@ -207,30 +221,38 @@ require_once "database.php";
                     <div class="displayCustomerOrder">
                         <?php
                             if ($_SESSION["role"]>0){
-                                $sql_allCustomerOrder = "SELECT * FROM CUSTOMER NATURAL JOIN PRODUCT ORDER BY NGAY DESC";
+                                $sql_allCustomerOrder = "SELECT * FROM CUSTOMER NATURAL JOIN PRODUCT ORDER BY NGAY DESC LIMIT 10";
                             }
                             else {
-                                $sql_allCustomerOrder = "SELECT * FROM CUSTOMER NATURAL JOIN PRODUCT WHERE NGUOIQL='" . $_SESSION["email"] . "' ORDER BY NGAY DESC";
+                                $sql_allCustomerOrder = "SELECT * FROM CUSTOMER NATURAL JOIN PRODUCT WHERE NGUOIQL='" . $_SESSION["email"] . "' ORDER BY NGAY DESC LIMIT 10";
                             }
                             $result_allCustomerOrder = $mysqli->query($sql_allCustomerOrder);
                             if (mysqli_num_rows($result_allCustomerOrder) > 0) {
-                                $checkName = "";
-                                $checkNumber = "";
-                                $checkDate = "";
-                                $count = 0;
-                                echo "<h3>Danh sách đơn hàng: </h3><br>
-                                <div class='allCustomerOrder' style='background-color:whitesmoke;'>";
+                                echo "<h3>Danh sách 10 đơn hàng gần nhất: </h3><br>";
+                                echo"<table>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Tên khách hàng</th>
+                                            <th>Địa chỉ</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Ngày mua</th>
+                                            <th>Sản phẩm</th>
+                                            <th>Giá</th>
+                                        </tr>";
+                                $countOrderAll=1;
                                 while ($row = mysqli_fetch_assoc($result_allCustomerOrder)) {
-                                    echo "<div class='oneCustomerOrder'>
-                                            <label>Tên khách hàng: </label>" . $row['TENKH'] . "<br>
-                                            <label>Địa chỉ: </label>" . $row['DIACHI'] . "<br>
-                                            <label>Số điện thoại: </label>" . $row['SODIENTHOAI'] . "<br>
-                                            <label>Ngày mua: </label>" . $row['NGAY'] . "<br>
-                                            <label>Sản phẩm: </label>" . $row['TENSP'] . "VNĐ <br>
-                                            <label>Sản phẩm: </label>" . $row['GIASP'] . "VNĐ <br>";
-                                    echo "</div>";
+                                    echo "<tr>
+                                            <td>".$countOrderAll."</td>
+                                            <td>" . $row['TENKH'] . "</td>
+                                            <td>" . $row['DIACHI'] . "</td>
+                                            <td>" . $row['SODIENTHOAI'] . "</td>
+                                            <td>" . $row['NGAY'] . "</td>
+                                            <td>" . $row['TENSP'] . "</td>
+                                            <td>" . $row['GIASP'] . " VNĐ</td>
+                                        </tr>";
+                                    $countOrderAll++;
                                 }
-                                echo"</div>";
+                                echo"</table>";
                             }
                         ?>
                     </div>
@@ -270,12 +292,6 @@ require_once "database.php";
                                 <button type='submit' name='backCustomer' style='background-color:#dc3545;color:white;'>Quay lại</button>
                             </form>
                         </div>";
-                    echo"<div class='oneCustomer'>
-                            <div class='boxStt' style='width:9.4%;'>STT</div>
-                            <div class='boxName' style='width:23.6%;'>Tên khách hàng</div>
-                            <div class='boxPhone' style='width:15.1%;'>Số điện thoại</div>
-                            <div class='boxAddress' style='width:28.1%;'>Địa chỉ</div>
-                        </div>";
                     //Hiển thị danh sách tìm kiếm
                     if($_SESSION["role"]>0){
                         $sql_searchCustomer="SELECT * FROM CUSTOMER WHERE TENKH LIKE '%".$_POST['searchCustomer']."%'";
@@ -283,41 +299,50 @@ require_once "database.php";
                     else{
                         $sql_searchCustomer="SELECT * FROM CUSTOMER WHERE NGUOIQL='" . $_SESSION["email"] . "' AND TENKH LIKE '%".$_POST['searchCustomer']."%'";
                     }
-                        $result_searchCustomer=$mysqli->query($sql_searchCustomer);
-                        if (mysqli_num_rows($result_searchCustomer) > 0) {
-                            $checkName = "";
-                            $checkPhone = "";
-                            $count = 0;
-                            while ($row = mysqli_fetch_assoc($result_searchCustomer)) {
-                                if (($checkName != $row['TENKH']) || ($checkPhone != $row['SODIENTHOAI'])) {
-                                    $count++;
-                                    echo "<div class='oneCustomer'>
-                                            <div class='boxStt'>" . $count . "</div>
-                                            <div class='boxName'>" . $row['TENKH'] . "</div>
-                                            <div class='boxPhone'>" . $row['SODIENTHOAI'] . "</div>
-                                            <div class='boxAddress'>" . $row['DIACHI'] . "</div>
-                                            <div class='option'>
-                                                <form method='POST' action='watchAllOrder.php'>
-                                                    <button type='submit' name='watchAllOrder' style='background-color:#198754;color:white;'>Xem chi tiết</button>
-                                                    <input type='hidden' name='hiddenName' value='".$row["TENKH"]."'>
-                                                    <input type='hidden' name='hiddenPhone' value='".$row["SODIENTHOAI"]."'>
-                                                </form>
-                                            </div>
-                                        </div>";
-                                    $checkName = $row['TENKH'];
-                                    $checkPhone = $row['SODIENTHOAI'];
-                                }
+                    $result_searchCustomer=$mysqli->query($sql_searchCustomer);
+                    if (mysqli_num_rows($result_searchCustomer) > 0) {
+                        echo"<table>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên khách hàng</th>
+                                <th>Số điện thoại</th>
+                                <th>Địa chỉ</th>
+                                <th>Thao tác</th>
+                            </tr>";
+                        $checkName = "";
+                        $checkPhone = "";
+                        $count = 0;
+                        while ($row = mysqli_fetch_assoc($result_searchCustomer)) {
+                            if (($checkName != $row['TENKH']) || ($checkPhone != $row['SODIENTHOAI'])) {
+                                $count++;
+                                echo "<tr>
+                                        <td>" . $count . "</td>
+                                        <td>" . $row['TENKH'] . "</td>
+                                        <td>" . $row['SODIENTHOAI'] . "</td>
+                                        <td>" . $row['DIACHI'] . "</td>
+                                        <td>
+                                            <form method='POST' action='watchAllOrder.php'>
+                                                <button type='submit' name='watchAllOrder' style='background-color:#198754;color:white;'>Xem chi tiết</button>
+                                                <input type='hidden' name='hiddenName' value='".$row["TENKH"]."'>
+                                                <input type='hidden' name='hiddenPhone' value='".$row["SODIENTHOAI"]."'>
+                                            </form>
+                                        </td>
+                                    </tr>";
+                                $checkName = $row['TENKH'];
+                                $checkPhone = $row['SODIENTHOAI'];
                             }
                         }
-                        else{
-                            echo"<div style='color:red;font-weight:700;'>Không có dữ liệu tìm kiếm</div>";
-                            echo"<script type='text/javascript'>
-                                    display('buttonCustomer'); 
-                                    window.addEventListener('DOMContentLoaded', function() {
-                                        document.getElementById('hiddenSearchCustomer').style.display='block';
-                                });
-                            </script>";
-                        }
+                    }
+                    else{
+                        echo"<div style='color:red;font-weight:700;'>Không có dữ liệu tìm kiếm</div>";
+                        echo"<script type='text/javascript'>
+                                display('buttonCustomer'); 
+                                window.addEventListener('DOMContentLoaded', function() {
+                                    document.getElementById('hiddenSearchCustomer').style.display='block';
+                            });
+                        </script>";
+                    }
+                    echo"</table>";
                     }
                 ?>
                 <div id="hiddenSearchCustomer">
@@ -330,6 +355,14 @@ require_once "database.php";
                             $sql_customer = "SELECT * FROM CUSTOMER WHERE NGUOIQL='" . $_SESSION["email"] . "' ORDER BY NGAY AND TENKH DESC";
                         }
                         $result_customer = $mysqli->query($sql_customer);
+                        echo"<table>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên khách hàng</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Thao tác</th>
+                                </tr>";
                         if (mysqli_num_rows($result_customer) > 0) {
                             $checkName = "";
                             $checkPhone = "";
@@ -337,24 +370,25 @@ require_once "database.php";
                             while ($row = mysqli_fetch_assoc($result_customer)) {
                                 if (($checkName != $row['TENKH']) || ($checkPhone != $row['SODIENTHOAI'])) {
                                     $count++;
-                                    echo "<div class='oneCustomer'>
-                                            <div class='boxStt'>" . $count . "</div>
-                                            <div class='boxName'>" . $row['TENKH'] . "</div>
-                                            <div class='boxPhone'>" . $row['SODIENTHOAI'] . "</div>
-                                            <div class='boxAddress'>" . $row['DIACHI'] . "</div>
-                                            <div class='option'>
+                                    echo "<tr>
+                                            <td>" . $count . "</td>
+                                            <td>" . $row['TENKH'] . "</td>
+                                            <td>" . $row['SODIENTHOAI'] . "</td>
+                                            <td>" . $row['DIACHI'] . "</td>
+                                            <td>
                                                 <form method='POST' action='watchAllOrder.php'>
                                                     <button type='submit' name='watchAllOrder' style='background-color:#198754;color:white;'>Xem chi tiết</button>
                                                     <input type='hidden' name='hiddenName' value='".$row["TENKH"]."'>
                                                     <input type='hidden' name='hiddenPhone' value='".$row["SODIENTHOAI"]."'>
                                                 </form>
-                                            </div>
-                                        </div>";
+                                            </td>
+                                        </tr>";
                                     $checkName = $row['TENKH'];
                                     $checkPhone = $row['SODIENTHOAI'];
                                 }
                             }
                         }
+                        echo"</table>";
                     ?>
                 </div>
             </div>
@@ -365,6 +399,13 @@ require_once "database.php";
                     <form method="POST">
                         <input type="text" class="search" name="searchStaff" placeholder="Nhập từ khóa">
                         <button type="submit" class="submitSearchOrder" name="submitSearchStaff">Tìm kiếm</button>
+                    </form>
+                </div>
+                <!-- Show/Hidden form add nhân viên -->
+                <div class="showHidden">
+                    <form method="POST">
+                        <button type="submit" name="showFormStaff">Form thêm nhân viên</button>
+                        <button type="submit" name="hiddenFormStaff">Ẩn form</button>
                     </form>
                 </div>
                 <?php
@@ -399,24 +440,34 @@ require_once "database.php";
                             $sql_searchStaff="SELECT * FROM STAFF WHERE NGUOIQL = '".$_SESSION["role"]."' AND (TENNV LIKE '%".$_POST['searchStaff']."%' OR MANV LIKE '%".$_POST['searchStaff']."%') ";
                         }
                         $result_searchStaff=$mysqli->query($sql_searchStaff);
+                        echo"<h3>Danh sách nhân viên: </h3><br>
+                            <table>
+                                <tr>
+                                    <th>Mã nhân viên</th>
+                                    <th>Tên nhân viên</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Email</th>
+                                    <th>Thao tác</th>
+                                </tr>";
                             if (mysqli_num_rows($result_searchStaff) > 0) {
                                 $prev = "";
-                                echo "<h3>Danh sách nhân viên: </h3><br>
-                                    <div class='allStaff'>";
                                 while ($row = mysqli_fetch_assoc($result_searchStaff)) {
-                                    echo "<div class='oneStaff'>
+                                    echo "<tr>
+                                            <td>".$row['MANV']."</td>
+                                            <td>" . $row['TENNV'] . "</td>
+                                            <td>" . $row['DIACHI'] . "</td>
+                                            <td>" . $row['SODIENTHOAI'] . "</td>
+                                            <td>" . $row['EMAIL'] . "</td>
+                                            <td>
                                                 <form method='POST'>
-                                                    <label>Mã nhân viên:</label><input name='idOneStaff' value='" . $row['MANV'] . "' readonly='true'><br>
-                                                    <label>Tên nhân viên: </label>" . $row['TENNV'] . "<br>
-                                                    <label>Địa chỉ: </label>" . $row['DIACHI'] . "<br>
-                                                    <label>Số điện thoại: </label>" . $row['SODIENTHOAI'] . "<br>
-                                                    <label>Email: </label>" . $row['EMAIL'] . "<br>
+                                                    <input type='hidden' name='idOneStaff' value='" . $row['MANV'] . "'><br>
                                                     <button type='submit' name='updateStaff'>Chỉnh sửa</button>
                                                     <button type='submit' name='deleteStaff'>Xóa</button>
                                                 </form>
-                                        </div>";
+                                            </td>
+                                        </tr>";
                                 }
-                                echo "</div>";
                             }
                             else{
                                 echo"<div style='color:red;font-weight:700;'>Không có dữ liệu tìm kiếm</div>";
@@ -427,15 +478,9 @@ require_once "database.php";
                                         });
                                     </script>";
                             }
+                            echo"</table>";
                     }
                 ?>
-                <!-- Show/Hidden form add nhân viên -->
-                <div class="showHidden">
-                    <form method="POST">
-                        <button type="submit" name="showFormStaff">Form thêm nhân viên</button>
-                        <button type="submit" name="hiddenFormStaff">Ẩn form</button>
-                    </form>
-                </div>
                 <!-- Kiểm tra submit show/hidden -->
                 <?php
                     if (isset($_POST["showFormStaff"])){
@@ -501,21 +546,32 @@ require_once "database.php";
                             if (mysqli_num_rows($result_allStaff) > 0) {
                                 $prev = "";
                                 echo "<h3>Danh sách nhân viên: </h3><br>
-                                    <div class='allStaff'>";
+                                    <table>
+                                        <tr>
+                                            <th>Mã nhân viên</th>
+                                            <th>Tên nhân viên</th>
+                                            <th>Địa chỉ</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Email</th>
+                                            <th>Thao tác</th>
+                                        </tr>";
                                 while ($row = mysqli_fetch_assoc($result_allStaff)) {
-                                    echo "<div class='oneStaff'>
-                                            <form method='POST'>
-                                                <label>Mã nhân viên:</label><input name='idOneStaff' value='" . $row['MANV'] . "' readonly='true'><br>
-                                                <label>Tên nhân viên: </label>" . $row['TENNV'] . "<br>
-                                                <label>Địa chỉ: </label>" . $row['DIACHI'] . "<br>
-                                                <label>Số điện thoại: </label>" . $row['SODIENTHOAI'] . "<br>
-                                                <label>Email: </label>" . $row['EMAIL'] . "<br>
-                                                <button type='submit' name='updateStaff'>Chỉnh sửa</button>
-                                                <button type='submit' name='deleteStaff'>Xóa</button>
-                                            </form>
-                                        </div>";
+                                    echo "<tr>
+                                            <td>" . $row['MANV'] . "</td>
+                                            <td>" . $row['TENNV'] . "</td>
+                                            <td>" . $row['DIACHI'] . "</td>
+                                            <td>" . $row['SODIENTHOAI'] . "</td>
+                                            <td>" . $row['EMAIL'] . "</td>
+                                            <td>
+                                                <form method='POST'>
+                                                    <input type='hidden' name='idOneStaff' value='" . $row['MANV'] . "'><br>
+                                                    <button type='submit' name='updateStaff'>Chỉnh sửa</button>
+                                                    <button type='submit' name='deleteStaff'>Xóa</button>
+                                                </form>
+                                            </td>
+                                        </tr>";
                                 }
-                            echo "</div>";
+                            echo "</table>";
                             }
                             //Kiểm tra submit delete
                             if (isset ($_POST["deleteStaff"])) {
@@ -541,6 +597,12 @@ require_once "database.php";
                     <form method="POST">
                         <input type="text" class="search" name="searchProduct" placeholder="Nhập từ khóa">
                         <button type="submit" class="submitSearchOrder" name="submitSearchProduct">Tìm kiếm</button>
+                    </form>
+                </div>
+                <div class="showHidden">
+                    <form method="POST">
+                        <button type="submit" name="showFormProduct">Thêm form sản phẩm</button>
+                        <button type="submit" name="hiddenFormProduct">Ẩn form</button>
                     </form>
                 </div>
                 <?php
@@ -578,30 +640,39 @@ require_once "database.php";
                         if (mysqli_num_rows($result_searchProduct) > 0) {
                             $prev = "";
                             echo "<h3>Danh sách sản phẩm: </h3><br>
-                                <div class='allOrder'>";
+                                <table>
+                                    <tr>
+                                        <th>Mã sản phẩm</th>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Giá sản phẩm</th>
+                                        <th>Thông tin sản phẩm</th>
+                                        <th>Số lượng</th>
+                                        <th>Thao tác</th>
+                                    </tr>";
                             while ($row = mysqli_fetch_assoc($result_searchProduct)) {
-                            echo"<div class='oneOrder'>
-                                    <div>
+                            echo"<tr>
+                                    <td>" . $row['MASP'] . "</td>
+                                    <td>" . $row['TENSP'] . "</td>
+                                    <td>" . $row['GIASP'] . "</td>
+                                    <td>" . $row['THONGTINSP'] . "</td>
+                                    <td>" . $row['SOLUONG'] . "</td>
+                                    <td>
                                         <form method='POST'>
-                                        <label>Mã sản phẩm: </label><input name='idOneProduct' value='" . $row['MASP'] . "'readonly='true'><br>
-                                        <label>Tên sản phẩm: </label>" . $row['TENSP'] . "<br>
-                                        <label>Giá sản phẩm: </label>" . $row['GIASP'] . "VNĐ<br>
-                                        <label>Thông tin sản phẩm: </label>" . $row['THONGTINSP'] . "<br>
-                                        <label>Số lượng: </label>" . $row['SOLUONG'] . "<br>
-                                        <button type='submit' name='importProduct'>Nhập hàng</button>
-                                        <button type='submit' name='updateProduct'>Chỉnh sửa</button>
+                                            <input type='hidden' name='idOneProduct' value='" . $row['MASP'] . "'><br>
+                                            <button type='submit' name='importProduct'>Nhập hàng</button>
+                                            <button type='submit' name='updateProduct'>Chỉnh sửa</button>
                                         </form>
-                                    </div>
-                                    <div id='importNumberProduct" . $row['MASP'] . "' style='display:none;'>
+                                        <div id='importNumberProduct" . $row['MASP'] . "' style='display:none;'>
                                         <form method='POST'>
                                             <input type='hidden' name='hiddenIdProduct' value='" .$row['MASP'] . "'>
                                             <input type='number' min=1 name='numberImport' placeholder='Số lượng nhập'>
                                             <button type='submit' name='confirmProduct'>Thêm</button>
                                         </form>
-                                    </div>";
-                            echo "</div>";
+                                    </div>
+                                    </td>";
+                            echo "</tr>";
                             }
-                            echo "</div>";
+                            echo "</table>";
                         }
                         else{
                             echo"<div style='color:red;font-weight:700;'>Không có dữ liệu tìm kiếm</div>";
@@ -614,12 +685,6 @@ require_once "database.php";
                         }
                     }
                 ?>
-                <div class="showHidden">
-                    <form method="POST">
-                        <button type="submit" name="showFormProduct">Thêm form sản phẩm</button>
-                        <button type="submit" name="hiddenFormProduct">Ẩn form</button>
-                    </form>
-                </div>
                 <?php
                     if (isset($_POST["showFormProduct"])){
                         echo "<script type='text/javascript'>
@@ -691,30 +756,39 @@ require_once "database.php";
                             if (mysqli_num_rows($result_allOrder) > 0) {
                                 $prev = "";
                                 echo "<h3>Danh sách sản phẩm: </h3><br>
-                                    <div class='allOrder'>";
+                                    <table>
+                                        <tr>
+                                            <th>Mã sản phẩm</th>
+                                            <th>Tên sản phẩm</th>
+                                            <th>Giá sản phẩm</th>
+                                            <th>Thông tin sản phẩm</th>
+                                            <th>Số lượng</th>
+                                            <th>Thao tác</th>
+                                        </tr>";
                                 while ($row = mysqli_fetch_assoc($result_allOrder)) {
-                                echo "<div class='oneOrder'>
-                                        <div>
+                                echo "<tr>
+                                        <td>" . $row['MASP'] . "</td>
+                                        <td>" . $row['TENSP'] . "</td>
+                                        <td>" . $row['GIASP'] . "</td>
+                                        <td>" . $row['THONGTINSP'] . "</td>
+                                        <td>" . $row['SOLUONG'] . "</td>
+                                        <td>
                                             <form method='POST'>
-                                                <label>Mã sản phẩm: </label><input name='idOneProduct' value='" . $row['MASP'] . "'readonly='true'><br>
-                                                <label>Tên sản phẩm: </label>" . $row['TENSP'] . "<br>
-                                                <label>Giá sản phẩm: </label>" . $row['GIASP'] . "VNĐ<br>
-                                                <label>Thông tin sản phẩm: </label>" . $row['THONGTINSP'] . "<br>
-                                                <label>Số lượng: </label>" . $row['SOLUONG'] . "<br>
+                                                <input type='hidden' name='idOneProduct' value='" . $row['MASP'] . "'readonly='true'><br>
                                                 <button type='submit' name='importProduct'>Nhập hàng</button>
                                                 <button type='submit' name='updateProduct'>Chỉnh sửa</button>
                                             </form>
-                                        </div>
-                                        <div id='importNumberProduct" . $row['MASP'] . "' style='display:none;'>
+                                            <div id='importNumberProduct" . $row['MASP'] . "' style='display:none;'>
                                             <form method='POST'>
                                                 <input type='hidden' name='hiddenIdProduct' value='" .$row['MASP'] . "'>
                                                 <input type='number' min=1 name='numberImport' placeholder='Số lượng nhập'>
                                                 <button type='submit' name='confirmProduct'>Thêm</button>
                                             </form>
                                         </div>
-                                    </div>";
+                                        </td>
+                                    </tr>";
                                 }
-                                echo "</div>";
+                                echo "</table>";
                             }
                             //Kiểm tra update sản phẩm
                             if (isset ($_POST["updateProduct"])) {
@@ -785,17 +859,6 @@ require_once "database.php";
                                 </form>
                             </div>";
                     //Hiển thị danh sách tìm kiếm
-                        echo "<div>
-                                <h3>Danh sách bảo dưỡng xe</h3>
-                                <div class='oneMaintenance'>
-                                    <div class='boxStt' style='width:6.75%;'>STT</div>
-                                    <div class='boxName' style='width:16.75%;'>Tên khách hàng</div>
-                                    <div class='boxPhone' style='width:10.7%;'>Số điện thoại</div>
-                                    <div class='boxAddress' style='width:20.15%;''>Địa chỉ</div>
-                                    <div class='boxProduct' style='width:13.4%;'>Sản phẩm</div>
-                                    <div class='boxDate' style='width:12.05%;'>Ngày bảo dưỡng gần nhất</div>
-                                </div>
-                            </div>";
                         if($_SESSION["role"]>1){
                             $sql_searchMaintenance="SELECT * FROM CUSTOMER NATURAL JOIN PRODUCT WHERE TENKH LIKE '%".$_POST['searchMaintenance']."%'";
                         }
@@ -806,6 +869,16 @@ require_once "database.php";
                         $count = 1;
                         //Kiểm tra sản phẩm tìm kiểm cần bảo trì
                         if (mysqli_num_rows($result_searchMaintenance) > 0) {
+                            echo "<h3>Danh sách bảo dưỡng xe</h3>
+                                <table>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên khách hàng</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Địa chỉ</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Ngày bảo dưỡng gần nhất</th>
+                                    </tr>";
                             while ($row = mysqli_fetch_assoc($result_searchMaintenance)) {
                                 $dateStart = $row['NGAY'];
                                 $dateEnd = date("Y-m-d");
@@ -815,19 +888,19 @@ require_once "database.php";
                                 $distance = floor($time / (60 * 60 * 24));
 
                                 if ($distance > 360) {
-                                    echo "<div class='oneMaintenance'>
-                                            <div class='boxStt'>" . $count . "</div>
-                                            <div class='boxName'>" . $row['TENKH'] . "</div>
-                                            <div class='boxPhone'>" . $row['SODIENTHOAI'] . "</div>
-                                            <div class='boxAddress'>" . $row['DIACHI'] . "</div>
-                                            <div class='boxProduct'>" . $row['TENSP'] . "</div>
-                                            <div class='boxDate'>" . $row['NGAY'] . "</div>
-                                            <div class='boxUpdateDate' id='oldDate".$row['ID']."'>
+                                    echo "<tr>
+                                            <td>" . $count . "</td>
+                                            <td>" . $row['TENKH'] . "</td>
+                                            <td>" . $row['SODIENTHOAI'] . "</td>
+                                            <td>" . $row['DIACHI'] . "</td>
+                                            <td>" . $row['TENSP'] . "</td>
+                                            <td>" . $row['NGAY'] . "</td>
+                                            <td id='oldDate".$row['ID']."'>
                                                 <form method='POST'>
                                                     <input type='hidden' name='idHidden' value='".$row['ID']."'>
                                                     <button type='submit' name='updateMaintenance' >Cập nhật</button>
                                                 </form>
-                                            </div>
+                                            </td>
                                             <div id='updateDate".$row['ID']."' class='boxNewDate' style='display:none;'>
                                                 <form method='POST'>
                                                     <input type='hidden' name='idProduct' value='".$row['MASP']."'>
@@ -837,7 +910,7 @@ require_once "database.php";
                                                     <button type='submit' name='updateNewDate'>Cập nhật</button>
                                                 </form>
                                             </div>
-                                        </div>";
+                                        </tr>";
                                     $count++;
                                 }
                             }
@@ -851,6 +924,7 @@ require_once "database.php";
                                     });
                                 </script>";
                         }
+                        echo"</table>";
                     }
                 ?>
                 <div id="hiddenSearchMaintenance">
@@ -866,6 +940,16 @@ require_once "database.php";
                                 }
                                 $result_listProduct = $mysqli->query($sql_listProduct);
                                 $count = 1;
+                                echo "<h3>Danh sách bảo dưỡng xe</h3>
+                                <table>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Tên khách hàng</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Địa chỉ</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Ngày bảo dưỡng gần nhất</th>
+                                    </tr>";
                                 if (mysqli_num_rows($result_listProduct) > 0) {
                                     while ($row = mysqli_fetch_assoc($result_listProduct)) {
                                         $dateStart = $row['NGAY'];
@@ -876,19 +960,19 @@ require_once "database.php";
                                         $distance = floor($time / (60 * 60 * 24));
 
                                         if ($distance > 360) {
-                                            echo "<div class='oneMaintenance'>
-                                                    <div class='boxStt'>" . $count . "</div>
-                                                    <div class='boxName'>" . $row['TENKH'] . "</div>
-                                                    <div class='boxPhone'>" . $row['SODIENTHOAI'] . "</div>
-                                                    <div class='boxAddress'>" . $row['DIACHI'] . "</div>
-                                                    <div class='boxProduct'>" . $row['TENSP'] . "</div>
-                                                    <div class='boxDate'>" . $row['NGAY'] . "</div>
-                                                    <div class='boxUpdateDate' id='oldDate".$row['ID']."'>
+                                            echo "<tr>
+                                                    <td>" . $count . "</td>
+                                                    <td>" . $row['TENKH'] . "</td>
+                                                    <td>" . $row['SODIENTHOAI'] . "</td>
+                                                    <td>" . $row['DIACHI'] . "</td>
+                                                    <td>" . $row['TENSP'] . "</td>
+                                                    <td>" . $row['NGAY'] . "</td>
+                                                    <td id='oldDate".$row['ID']."'>
                                                         <form method='POST'>
                                                             <input type='hidden' name='idHidden' value='".$row['ID']."'>
                                                             <button type='submit' name='updateMaintenance'>Cập nhật</button>
                                                         </form>
-                                                    </div>
+                                                    </td>
                                                     <div id='updateDate".$row['ID']."' class='boxNewDate' style='display:none;'>
                                                         <form method='POST'>
                                                             <input type='hidden' name='idProduct' value='".$row['MASP']."'>
@@ -898,11 +982,12 @@ require_once "database.php";
                                                             <button type='submit' name='updateNewDate'>Cập nhật</button>
                                                         </form>
                                                     </div>
-                                                </div>";
+                                                </tr>";
                                             $count++;
                                             }
                                     }
                                 }
+                                echo"</table>";
                             ?>
                         </div>
                     </div>
@@ -966,21 +1051,31 @@ require_once "database.php";
                 <?php
                     $sql_accountRole="SELECT * FROM `account` WHERE ROLE='0'";
                     $result_accountRole=$mysqli->query($sql_accountRole);
-                    echo"<div style='width:1200px'>
-                        <h3>Danh sách đăng ký quản lý</h3>
-                        <div class='allRole'>";
+                    echo"<h3>Danh sách đăng ký quản lý</h3>
+                        <table>
+                            <tr>
+                                <th>Mã</th>
+                                <th>Họ tên</th>
+                                <th>Địa chỉ</th>
+                                <th>Số điện thoại</th>
+                                <th>Email</th>
+                                <th>Thao tác</th>
+                            </tr>";
                     if (mysqli_num_rows($result_accountRole) > 0) {
                         while ($row = mysqli_fetch_assoc($result_accountRole)) {
-                            echo "<div class='oneRole'>
-                                    <form method='POST'>
-                                        <label>Mã:</label><input name='idRole' value='" . $row['ID'] . "'><br>
-                                        <label>Họ tên: </label>".$row["NAME"]."<br>
-                                        <label>Địa chỉ: </label>".$row["ADDRESS"]."<br>
-                                        <label>Số điện thoại: </label>".$row["CONTACT"]."<br>
-                                        <label>Email: </label>".$row["ACCOUNT"]."<br>
-                                        <button type='submit' name='agree'>Đồng ý</button>
-                                        <button type='submit' name='refuse'>Từ chối</button>
-                                    </form>";
+                            echo "<tr>
+                                    <td>" . $row['ID'] . "</td>
+                                    <td>" . $row['NAME'] . "</td>
+                                    <td>" . $row['ADDRESS'] . "</td>
+                                    <td>" . $row['CONTACT'] . "</td>
+                                    <td>" . $row['ACCOUNT'] . "</td>
+                                    <td>
+                                        <form method='POST'>
+                                            <input type='hidden' name='idRole' value='" . $row['ID'] . "'>
+                                            <button type='submit' name='agree'>Đồng ý</button>
+                                            <button type='submit' name='refuse'>Từ chối</button>
+                                        </form>
+                                    </td>";
                             if (isset($_POST["agree"])){
                                 $sql_updateRole="UPDATE `account` SET `ROLE`=1 WHERE ID='".$_POST["idRole"]."'";
                                 $mysqli->query($sql_updateRole);
@@ -991,11 +1086,10 @@ require_once "database.php";
                                 $mysqli->query($sql_updateRole);
                                 die("<script>alert('Bạn đã xóa yêu cầu thành công!');window.location.href = 'home.php';</script>");
                             }
-                            echo "</div>";
+                            echo "</tr>";
                         }
                     }
-                    echo"</div>
-                        </div>";
+                    echo"</table>";
                 ?>
             </div>
 
