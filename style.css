@@ -272,3 +272,8 @@ td, th {
 tr:nth-child(even) {
     background-color:rgb(114, 215, 243);
 }
+.oneOrder{
+    border: 1px solid black;
+    padding: 1% 1% 1% 1%;
+    margin: 1% 1% 1% 1%;
+}

@@ -170,6 +170,24 @@ require_once "database.php";
                                 placeholder="Địa chỉ"></textarea><br>
                             <input class="inputFormOrder" type="number" name="phoneCustomer" min=0
                                 placeholder="Số điện thoại"><br>
+                            <label for="nameStaffSell"
+                                style="color:black;padding-left:17%;margin:4% 0 0% 0;font-size:20px">Người bán:</label>
+                            <input list="nameStaffSells" name="nameStaffSell" id="nameStaffSell">
+                            <datalist id="nameStaffSells">
+                                <?php
+                                    if ($_SESSION["role"]>1){
+                                        $sql_nameStaffSell="SELECT * FROM STAFF WHERE 1";
+                                    }else{
+                                        $sql_nameStaffSell="SELECT * FROM STAFF WHERE NGUOIQL='".$_SESSION["email"]."'";
+                                    }
+                                    $result_nameStaffSell=$mysqli->query($sql_nameStaffSell);
+                                    if (mysqli_num_rows($result_nameStaffSell) > 0) {
+                                        while ($row = mysqli_fetch_assoc($result_nameStaffSell)) {
+                                                echo "<option value='".$row["MANV"]."'>".$row["TENNV"]."</option>";
+                                        }
+                                    }
+                                ?>
+                            </datalist>
                             <div style="color:black;padding-left:17%;margin:2% 0 0% 0;font-size:20px">Sản phẩm đã mua:
                             </div>
                             <br>
@@ -205,8 +223,8 @@ require_once "database.php";
                                 if (mysqli_num_rows($result_customerOrder) > 0) {
                                     while ($row_check = mysqli_fetch_assoc($result_customerOrder)) {
                                         if (isset ($_POST['data'][$row_check['MASP']])) {
-                                            $sql_saveOrder = "INSERT INTO `CUSTOMER`(TENKH, DIACHI, SODIENTHOAI, MASP,NGAY, NGUOIQL)
-                                                         VALUES ('" . $_POST['nameCustomer'] . "','" . $_POST['addressCustomer'] . "', '" . $_POST['phoneCustomer'] . "', '" . $row_check['MASP'] . "','" . date("Y-m-d") . "' , '" . $_SESSION['email'] . "')";
+                                            $sql_saveOrder = "INSERT INTO `CUSTOMER`(TENKH, DIACHI, SODIENTHOAI, MASP,NGAY, MANGUOIBAN, NGUOIQL)
+                                                         VALUES ('" . $_POST['nameCustomer'] . "','" . $_POST['addressCustomer'] . "', '" . $_POST['phoneCustomer'] . "', '" . $row_check['MASP'] . "','" . date("Y-m-d") . "' , '" . $_POST['nameStaffSell'] . "', '" . $_SESSION['email'] . "')";
                                             echo "<div></div>";
                                             $mysqli->query($sql_saveOrder);
                                         }
@@ -462,6 +480,7 @@ require_once "database.php";
                                             <td>
                                                 <form method='POST'>
                                                     <input type='hidden' name='idOneStaff' value='" . $row['MANV'] . "'><br>
+                                                    <button type='submit' name='inforOrder'  style='background-color:#17a2b8; color:white'>Danh sách bán hàng</button><br>
                                                     <button type='submit' name='updateStaff' style='background-color:#ffc107;'>Chỉnh sửa</button>
                                                     <button type='submit' name='deleteStaff' style='background-color:#dc3545; color:white'>Xóa</button>
                                                 </form>
@@ -565,6 +584,8 @@ require_once "database.php";
                                             <td>
                                                 <form method='POST'>
                                                     <input type='hidden' name='idOneStaff' value='" . $row['MANV'] . "'><br>
+                                                    <input type='hidden' name='nameOneStaff' value='" . $row['TENNV'] . "'><br>
+                                                    <button type='submit' name='inforOrder'  style='background-color:#17a2b8; color:white'>Danh sách bán hàng</button><br>
                                                     <button type='submit' name='updateStaff' style='background-color:#ffc107;'>Chỉnh sửa</button>
                                                     <button type='submit' name='deleteStaff' style='background-color:#dc3545; color:white'>Xóa</button>
                                                 </form>
@@ -585,6 +606,14 @@ require_once "database.php";
                                             <input type='hidden' name='staffHidden' value=" . $_POST["idOneStaff"] . ">
                                         </form>
                                         <script>document.getElementById('hiddenStaff').submit()</script>";
+                            }
+                            //Kiểm tra submit infor
+                            if (isset ($_POST["inforOrder"])) {
+                                echo "<form id='hiddenInforOrder' method='POST' action='orderList.php'>
+                                            <input type='hidden' name='idStaffOrderList' value='" . $_POST["idOneStaff"] . "'>
+                                            <input type='hidden' name='nameStaffOrderList' value='" . $_POST["nameOneStaff"] . "'>
+                                        </form>
+                                        <script>document.getElementById('hiddenInforOrder').submit()</script>";
                             }
                         ?>
                     </div>
